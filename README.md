@@ -36,8 +36,9 @@ Docker desktop (moet draaiend zijn)
 Git
 
 stap 1:
-Je gaat de Git repository clonen naar een lokale folder.
-git clone <https link>
+Je gaat de Git repository clonen naar een lokale folder van jouw keuze.
+
+git clone https://github.com/arjen-kaekebeke/cloud-computing.git
 
 stap 2:
 Maak een nieuw bestand .env met de gegevens van .env.example
