@@ -1,4 +1,6 @@
 # Storingsmelder
+Arjen Kaekebeke
+
 
 Een klein meldingensysteem voor storingen. Je meldt een storing via een
 formulier, je ziet de openstaande meldingen in een lijst, en je sluit ze af als
@@ -16,82 +18,58 @@ verandert is hoe en waar ze draait.
 app.py              de applicatie
 requirements.txt    de pakketten die ze nodig heeft
 templates/          de HTML van de webpagina
+Dockerfile          bouwt de image van de applicatie
+compose.yaml        start de applicatie samen met postgesql
+requirements.txt    de pakketen die ze nodig heeft
+.dockerignore       bestanden die niet mee in de image gaan
+.env.example        sjabloon voor .env, met de namen van de variabelen
+.gitignore          bestanden die niet mee in Git gaan
+README.md           waar je nu zit
+
+.env zelf staat niet in de repo, want daar staat het wachtwoord van de database in. Je maakt hem zelf aan, zie hieronder
 ```
 
-## Wat er bewust niet in zit
+## WalkTrough
+```
+Wat heb je nodig:
+Docker desktop (moet draaiend zijn)
+Git
 
-Geen Dockerfile en geen compose-bestand. Die schrijf je zelf, dat is precies
-wat je in dit vak leert.
+stap 1:
+Je gaat de Git repository clonen naar een lokale folder.
+git clone <https link>
 
----
+stap 2:
+Maak een nieuw bestand .env met de gegevens van .env.example
+Open .env en vul de 3 waarden in
+voorbeeld:
+    POSTGRES_USER=storingsmelder
+    POSTGRES_PASSWORD=kies-een-wachtwoord
+    POSTGRES_DB=storingen
 
-## Wat de applicatie nodig heeft
+Je kiest de waarden zelf en laat geen enkele waarde leeg.
 
-| | |
-|---|---|
-| Python | 3.11 of hoger |
-| Pakketten | staan in `requirements.txt` |
-| Poort | 8000, tenzij je `PORT` anders instelt |
+stap 3:
+Check nog eens of jouw docker desktop draait
+Open Windows Powershell
+voer commando "docker compose up -d --build"
 
-## Instellingen
+check of alles draait
+voer commando "docker compose ps"
+normaal staat er bij de db aan het einde healthy
 
-Alles wordt geregeld met environment variables. Er staat niets vast in de code,
-en er is geen configuratiebestand dat je moet aanpassen.
+stap 4:
+Ga naar jou webbrowser en zoek op http://localhost:8000
+dan krijg je normaal gezien een website, als je dit niet krijgt overloop de stappen van de readme nog eens.
 
-| Variabele | Standaard | Wat het doet |
-|---|---|---|
-| `DATABASE_URL` | leeg | Leeg betekent opslaan in een SQLite-bestand. Vul je hier een PostgreSQL-adres in, dan gebruikt de applicatie die database |
-| `SQLITE_PAD` | `/data/storingen.db` | Waar het SQLite-bestand komt te staan |
-| `APP_TITEL` | `Storingsmelder` | De titel bovenaan de pagina |
-| `PORT` | `8000` | De poort waarop de applicatie luistert |
+stap 5:
+Hier leg ik uit hoe je kan stoppen en opruimen
+stoppen:
+docker compose down
+dit commando stopt alles en je meldingen blijven bewaard
 
-### Twee standen
-
-De applicatie draait met of zonder aparte database.
-
-**Zonder `DATABASE_URL`** schrijft ze naar een SQLite-bestand. Dat werkt meteen
-en je hebt niets anders nodig. Let op waar dat bestand terechtkomt, want daar
-kom je later op terug.
-
-**Met `DATABASE_URL`** praat ze met PostgreSQL. Bijvoorbeeld:
+docker compose down -v 
+dit commando stop alles en je meldingen worden gewist.
 
 ```
-DATABASE_URL=postgresql://storing:geheim@db:5432/storingen
-```
 
-Je hoeft de tabel niet zelf aan te maken. De applicatie doet dat bij het
-opstarten als ze nog niet bestaat.
-
----
-
-## Controleren of ze draait
-
-Naast de gewone pagina is er een adres dat kort antwoordt of alles in orde is:
-
-```
-GET /health
-```
-
-Draait alles, dan krijg je `{"status": "ok", ...}` met code 200. Kan de
-applicatie haar database niet bereiken, dan krijg je code 503. Dat adres komt
-later in het semester nog van pas.
-
----
-
-## Wat je er dit semester mee doet
-
-| Blok | Wat je doet |
-|---|---|
-| Week 1 tot 4 | Je zet deze applicatie in een container en laat ze samen met een database draaien |
-| Week 5 tot 9 | Je zet diezelfde applicatie op een Kubernetes-cluster en maakt ze bereikbaar in je browser |
-| Week 10 tot 11 | Je laat een pipeline het image bouwen en klaarzetten |
-
-Je begint dus nooit opnieuw. Elke opdracht bouwt verder op de vorige.
-
----
-
-## Deze repo is van jou
-
-Je hebt hem gemaakt vanaf het sjabloon, dus dit is jouw kopie. Werk erin, commit
-elke les, en push. Indienen doe je met de link naar een commit. Hoe dat precies
-gaat, staat in de opdrachtbundel op Toledo.
